@@ -6,3 +6,15 @@ dist/
 
 # Sensitive files
 .env
+
+# database
+prisma/dev.db
+
+# pm2 configuration
+ecosystem.config.js
+
+#log files
+*.log
+
+#vscode settings
+.vscode/
