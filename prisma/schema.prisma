@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Server {
+  id               String             @id @default(uuid())
+  discordId        String             @unique
+  name             String
+  leaderboards     Leaderboard[]
+  adminPermissions AdminPermission[]
+}
+
+model Leaderboard {
+  id        String       @id @default(uuid())
+  name      String
+  serverId  String
+  server    Server       @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  members   Member[]
+}
+
+model Member {
+  id            String          @id @default(uuid())
+  discordId     String
+  leaderboardId String
+  leaderboard   Leaderboard     @relation(fields: [leaderboardId], references: [id], onDelete: Cascade)
+  points        Int             @default(0)
+  history       PointHistory[]
+  isDeleted     Boolean         @default(false)
+}
+
+model PointHistory {
+  id          String      @id @default(uuid())
+  memberId    String
+  member      Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  points      Int
+  description String
+  timestamp   DateTime     @default(now())
+}
+
+model AdminPermission {
+  id        String   @id @default(uuid())
+  discordId String
+  serverId  String
+  server    Server   @relation(fields: [serverId], references: [id], onDelete: Cascade)
+}
