@@ -116,6 +116,154 @@ client.on('messageCreate', async (message) => {
   }
 });
 
+// View leaderboard
+client.on('messageCreate', async (message) => {
+  if (message.content.startsWith('!viewLeaderboard')) {
+    const args = message.content.split(' ');
+    const leaderboardName = args[1];
+
+    if (!leaderboardName) {
+      return message.reply('Usage: !viewLeaderboard <name>');
+    }
+
+    const leaderboardService = container.leaderboardService;
+    const memberService = container.memberService;
+
+    try {
+      const server = await container.serverService.getOrCreateServer(
+        message.guildId!,
+        message.guild!.name
+      );
+
+      const leaderboard = await leaderboardService.getLeaderboard(
+        server.id,
+        leaderboardName
+      );
+
+      if (!leaderboard) {
+        return message.reply(`Leaderboard "${leaderboardName}" not found.`);
+      }
+
+      const members = await memberService.getMembers(leaderboard.id);
+
+      if (members.length === 0) {
+        return message.reply(`Leaderboard "${leaderboardName}" is empty.`);
+      }
+
+      const leaderboardDisplay = members
+        .map(
+          (member, index) =>
+            `${index + 1}. <@${member.discordId}>: ${member.points} points`
+        )
+        .join('\n');
+
+      message.reply(`Leaderboard "${leaderboardName}":\n${leaderboardDisplay}`);
+    } catch (error) {
+      console.error('Error viewing leaderboard:', error);
+      message.reply('An error occurred while viewing the leaderboard.');
+    }
+  }
+});
+
+// List leaderboards
+client.on('messageCreate', async (message) => {
+  if (message.content === '!listLeaderboards') {
+    const leaderboardService = container.leaderboardService;
+
+    try {
+      const server = await container.serverService.getOrCreateServer(
+        message.guildId!,
+        message.guild!.name
+      );
+
+      const leaderboards = await leaderboardService.listLeaderboards(server.id);
+
+      if (leaderboards.length === 0) {
+        return message.reply('No leaderboards found in this server.');
+      }
+
+      const leaderboardNames = leaderboards.map((lb) => lb.name).join('\n');
+      message.reply(`Leaderboards in this server:\n${leaderboardNames}`);
+    } catch (error) {
+      console.error('Error listing leaderboards:', error);
+      message.reply('An error occurred while listing leaderboards.');
+    }
+  }
+});
+
+// Delete a leaderboard
+client.on('messageCreate', async (message) => {
+  if (message.content.startsWith('!deleteLeaderboard')) {
+    const args = message.content.split(' ');
+    const leaderboardName = args[1];
+
+    if (!leaderboardName) {
+      return message.reply('Usage: !deleteLeaderboard <name>');
+    }
+
+    const leaderboardService = container.leaderboardService;
+
+    try {
+      const server = await container.serverService.getOrCreateServer(
+        message.guildId!,
+        message.guild!.name
+      );
+
+      const leaderboard = await leaderboardService.getLeaderboard(
+        server.id,
+        leaderboardName
+      );
+
+      if (!leaderboard) {
+        return message.reply(`Leaderboard "${leaderboardName}" not found.`);
+      }
+
+      await leaderboardService.deleteLeaderboard(leaderboard.id);
+      message.reply(`Leaderboard "${leaderboardName}" has been deleted.`);
+    } catch (error) {
+      console.error('Error deleting leaderboard:', error);
+      message.reply('An error occurred while deleting the leaderboard.');
+    }
+  }
+});
+
+// Reset a leaderboard
+client.on('messageCreate', async (message) => {
+  if (message.content.startsWith('!resetPoints')) {
+    const args = message.content.split(' ');
+    const leaderboardName = args[1];
+
+    if (!leaderboardName) {
+      return message.reply('Usage: !resetPoints <leaderboard_name>');
+    }
+
+    const leaderboardService = container.leaderboardService;
+    const memberService = container.memberService;
+
+    try {
+      const server = await container.serverService.getOrCreateServer(
+        message.guildId!,
+        message.guild!.name
+      );
+
+      const leaderboard = await leaderboardService.getLeaderboard(
+        server.id,
+        leaderboardName
+      );
+
+      if (!leaderboard) {
+        return message.reply(`Leaderboard "${leaderboardName}" not found.`);
+      }
+
+      await memberService.resetPoints(leaderboard.id);
+      message.reply(`All points in "${leaderboardName}" have been reset to 0.`);
+    } catch (error) {
+      console.error('Error resetting points:', error);
+      message.reply('An error occurred while resetting points.');
+    }
+  }
+});
+
 // Modify points for a member
 client.on('messageCreate', async (message) => {
   if (message.content.startsWith('!modifyPoints')) {

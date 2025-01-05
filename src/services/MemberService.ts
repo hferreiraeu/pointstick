@@ -54,4 +54,22 @@ export class MemberService {
 
     return updatedMember;
   }
+
+  async getMembers(leaderboardId: string) {
+    return this.prisma.member.findMany({
+      where: { leaderboardId },
+      select: {
+        discordId: true,
+        points: true,
+      },
+      orderBy: { points: 'desc' },
+    });
+  }
+
+  async resetPoints(leaderboardId: string) {
+    return this.prisma.member.updateMany({
+      where: { leaderboardId },
+      data: { points: 0 },
+    });
+  }
 }

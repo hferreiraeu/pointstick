@@ -14,4 +14,17 @@ export class LeaderboardService {
       where: { serverId, name },
     });
   }
+
+  async listLeaderboards(serverId: string) {
+    return this.prisma.leaderboard.findMany({
+      where: { serverId },
+      select: { name: true },
+    });
+  }
+
+  async deleteLeaderboard(leaderboardId: string) {
+    return this.prisma.leaderboard.delete({
+      where: { id: leaderboardId },
+    });
+  }
 }
