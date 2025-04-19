@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from './PrismaService';
 
 export class PointHistoryService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma = PrismaService.getInstance().client;
 
   async getPointHistory(memberId: string) {
     return this.prisma.pointHistory.findMany({

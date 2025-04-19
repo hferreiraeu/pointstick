@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from './PrismaService';
 
 export class MemberService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma = PrismaService.getInstance().client;
 
   async addMemberToLeaderboard(leaderboardId: string, discordId: string) {
     return this.prisma.member.upsert({
@@ -34,12 +34,9 @@ export class MemberService {
         },
       },
     });
+    if (!member) throw new Error('Member not found.');
 
-    if (!member) {
-      throw new Error('Member not found in the leaderboard.');
-    }
-
-    const updatedMember = await this.prisma.member.update({
+    const updated = await this.prisma.member.update({
       where: { id: member.id },
       data: { points: { increment: points } },
     });
@@ -52,16 +49,13 @@ export class MemberService {
       },
     });
 
-    return updatedMember;
+    return updated;
   }
 
   async getMembers(leaderboardId: string) {
     return this.prisma.member.findMany({
       where: { leaderboardId },
-      select: {
-        discordId: true,
-        points: true,
-      },
+      select: { discordId: true, points: true },
       orderBy: { points: 'desc' },
     });
   }

@@ -31,6 +31,8 @@ model Member {
   points        Int             @default(0)
   history       PointHistory[]
   isDeleted     Boolean         @default(false)
+
+  @@unique([leaderboardId, discordId])
 }
 
 model PointHistory {
@@ -39,7 +41,7 @@ model PointHistory {
   member      Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
   points      Int
   description String
-  timestamp   DateTime     @default(now())
+  timestamp   DateTime    @default(now())
 }
 
 model AdminPermission {

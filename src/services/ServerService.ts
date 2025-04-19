@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from './PrismaService';
 
 export class ServerService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma = PrismaService.getInstance().client;
 
   async getOrCreateServer(discordId: string, name: string) {
     return this.prisma.server.upsert({

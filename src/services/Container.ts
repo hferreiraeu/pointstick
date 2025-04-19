@@ -1,4 +1,3 @@
-import { DatabaseService } from './DatabaseService';
 import { ServerService } from './ServerService';
 import { LeaderboardService } from './LeaderboardService';
 import { MemberService } from './MemberService';
@@ -7,7 +6,6 @@ import { AdminPermissionService } from './AdminPermissionService';
 
 export class Container {
   private static instance: Container;
-  private dbService: DatabaseService;
 
   serverService: ServerService;
   leaderboardService: LeaderboardService;
@@ -16,17 +14,14 @@ export class Container {
   adminPermissionService: AdminPermissionService;
 
   private constructor() {
-    this.dbService = new DatabaseService();
-    const prisma = this.dbService.getPrismaClient();
-
-    this.serverService = new ServerService(prisma);
-    this.leaderboardService = new LeaderboardService(prisma);
-    this.memberService = new MemberService(prisma);
-    this.pointHistoryService = new PointHistoryService(prisma);
-    this.adminPermissionService = new AdminPermissionService(prisma);
+    this.serverService = new ServerService();
+    this.leaderboardService = new LeaderboardService();
+    this.memberService = new MemberService();
+    this.pointHistoryService = new PointHistoryService();
+    this.adminPermissionService = new AdminPermissionService();
   }
 
-  static getInstance() {
+  static getInstance(): Container {
     if (!Container.instance) {
       Container.instance = new Container();
     }

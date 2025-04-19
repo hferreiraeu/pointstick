@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from './PrismaService';
 
 export class LeaderboardService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma = PrismaService.getInstance().client;
 
   async createLeaderboard(serverId: string, name: string) {
     return this.prisma.leaderboard.create({
