@@ -5,6 +5,7 @@ import { logError } from '../utils/logger';
 const modifyPointsCommand: Command = {
   name: 'modifypoints',
   description: 'Add or remove points for a member',
+  requireAdmin: true,
   execute: async (message, args): Promise<void> => {
     const [boardName, mention, ptsStr, ...desc] = args;
     const discordId = mention?.replace(/[<@!>]/g, '');
@@ -27,7 +28,7 @@ const modifyPointsCommand: Command = {
         boardName
       );
       if (!lb) {
-        await message.reply(`No leaderboard "${boardName}"`);
+        await message.reply(`❌ No leaderboard "${boardName}"`);
         return;
       }
       const updated = await c.memberService.modifyPoints(
@@ -37,11 +38,11 @@ const modifyPointsCommand: Command = {
         description
       );
       await message.reply(
-        `<@${discordId}> now has ${updated.points} points in "${boardName}".`
+        `✅ <@${discordId}> now has ${updated.points} points in "${boardName}".`
       );
     } catch (err) {
       logError('modifyPoints', err);
-      await message.reply('Failed to modify points.');
+      await message.reply('❌ Failed to modify points.');
     }
   },
 };

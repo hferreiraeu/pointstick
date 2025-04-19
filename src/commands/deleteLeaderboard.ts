@@ -5,6 +5,7 @@ import { logError } from '../utils/logger';
 const deleteLeaderboardCommand: Command = {
   name: 'deleteleaderboard',
   description: 'Remove a leaderboard and its data',
+  requireAdmin: true,
   execute: async (message, args): Promise<void> => {
     const [boardName] = args;
     if (!boardName) {
@@ -22,14 +23,14 @@ const deleteLeaderboardCommand: Command = {
         boardName
       );
       if (!lb) {
-        await message.reply(`No leaderboard "${boardName}"`);
+        await message.reply(`❌ No leaderboard "${boardName}"`);
         return;
       }
       await c.leaderboardService.deleteLeaderboard(lb.id);
-      await message.reply(`"${boardName}" deleted.`);
+      await message.reply(`✅ "${boardName}" deleted.`);
     } catch (err) {
       logError('deleteLeaderboard', err);
-      await message.reply('Failed to delete leaderboard.');
+      await message.reply('❌ Failed to delete leaderboard.');
     }
   },
 };

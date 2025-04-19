@@ -5,6 +5,7 @@ import { logError } from '../utils/logger';
 const resetPointsCommand: Command = {
   name: 'resetpoints',
   description: 'Set all points in a leaderboard to 0',
+  requireAdmin: true,
   execute: async (message, args): Promise<void> => {
     const [boardName] = args;
     if (!boardName) {
@@ -22,14 +23,14 @@ const resetPointsCommand: Command = {
         boardName
       );
       if (!lb) {
-        await message.reply(`No leaderboard "${boardName}"`);
+        await message.reply(`❌ No leaderboard "${boardName}"`);
         return;
       }
       await c.memberService.resetPoints(lb.id);
-      await message.reply(`All points in "${boardName}" reset to 0.`);
+      await message.reply(`✅ All points in "${boardName}" reset to 0.`);
     } catch (err) {
       logError('resetPoints', err);
-      await message.reply('Failed to reset points.');
+      await message.reply('❌ Failed to reset points.');
     }
   },
 };

@@ -5,6 +5,7 @@ import { logError } from '../utils/logger';
 const addMemberCommand: Command = {
   name: 'addmember',
   description: 'Add a member to a leaderboard',
+  requireAdmin: true,
   execute: async (message, args): Promise<void> => {
     const [boardName, mention] = args;
     const discordId = mention?.replace(/[<@!>]/g, '');
@@ -23,14 +24,14 @@ const addMemberCommand: Command = {
         boardName
       );
       if (!lb) {
-        await message.reply(`No leaderboard "${boardName}"`);
+        await message.reply(`❌ No leaderboard "${boardName}"`);
         return;
       }
       await c.memberService.addMemberToLeaderboard(lb.id, discordId);
-      await message.reply(`Added <@${discordId}> to "${boardName}".`);
+      await message.reply(`✅ Added <@${discordId}> to "${boardName}".`);
     } catch (err) {
       logError('addMember', err);
-      await message.reply('Failed to add member.');
+      await message.reply('❌ Failed to add member.');
     }
   },
 };
