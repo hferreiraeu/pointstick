@@ -1,0 +1,8 @@
+# Auto-detect text files and normalize to LF in the repo
+* text=auto
+
+# Explicitly keep your JSON, TS, SQL, etc. as text
+*.js   text
+*.ts   text
+*.json text
+*.sql  text
