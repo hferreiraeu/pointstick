@@ -12,12 +12,16 @@ const viewLeaderboardCommand: Command = {
       await message.reply('Usage: !viewLeaderboard <name>');
       return;
     }
+
     const c = Container.getInstance();
     try {
+      // Ensure server record exists
       const server = await c.serverService.getOrCreateServer(
         message.guildId!,
         message.guild!.name
       );
+
+      // Fetch the leaderboard
       const lb = await c.leaderboardService.getLeaderboard(
         server.id,
         boardName
@@ -26,15 +30,33 @@ const viewLeaderboardCommand: Command = {
         await message.reply(`No leaderboard "${boardName}"`);
         return;
       }
+
+      // Get members sorted by points
       const members = await c.memberService.getMembers(lb.id);
-      if (!members.length) {
+      if (members.length === 0) {
         await message.reply(`"${boardName}" is empty.`);
         return;
       }
-      const entries = members.map((m, i) => ({
-        name: `${i + 1}. <@${m.discordId}>`,
-        value: `${m.points} points`,
-      }));
+
+      // Build embed entries with display names
+      const entries = await Promise.all(
+        members.map(async (m, i) => {
+          let displayName: string;
+          try {
+            // displayName uses nickname if set, otherwise username
+            const guildMember = await message.guild!.members.fetch(m.discordId);
+            displayName = guildMember.displayName;
+          } catch {
+            // Fallback if member not found (e.g., left the server)
+            displayName = `<@${m.discordId}>`;
+          }
+          return {
+            name: `${i + 1}. ${displayName}`,
+            value: `${m.points} points`,
+          };
+        })
+      );
+
       const embed = buildLeaderboardEmbed(
         `Leaderboard: ${boardName}`,
         entries
