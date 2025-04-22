@@ -6,6 +6,8 @@ export interface Command {
 
   description: string;
 
+  usage?: string;  
+
   requireAdmin?: boolean;
   
   execute: (message: Message, args: string[]) => Promise<void>;

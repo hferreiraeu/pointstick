@@ -1,9 +1,12 @@
 import { Command } from '../types/Command';
+import { PREFIX } from '../config';
+import { Message } from 'discord.js';
 
 const helloCommand: Command = {
   name: 'hello',
   description: 'Replies with a greeting',
-  execute: async (message) => {
+  usage: `${PREFIX}hello`,
+  execute: async (message: Message, args: string[]): Promise<void> => {
     await message.reply('Hello, I am Point Stick!');
   },
 };

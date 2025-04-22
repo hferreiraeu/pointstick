@@ -1,15 +1,18 @@
 import { Command } from '../types/Command';
+import { PREFIX } from '../config';
 import { Container } from '../services/Container';
 import { logError } from '../utils/logger';
+import { Message } from 'discord.js';
 
 const deleteLeaderboardCommand: Command = {
   name: 'deleteleaderboard',
   description: 'Remove a leaderboard and its data',
+  usage: `${PREFIX}deleteleaderboard <name>`,
   requireAdmin: true,
-  execute: async (message, args): Promise<void> => {
+  execute: async (message: Message, args: string[]): Promise<void> => {
     const [boardName] = args;
     if (!boardName) {
-      await message.reply('Usage: !deleteLeaderboard <name>');
+      await message.reply(`Usage: ${PREFIX}deleteLeaderboard <name>`);
       return;
     }
     const c = Container.getInstance();

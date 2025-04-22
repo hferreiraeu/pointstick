@@ -1,11 +1,14 @@
 import { Command } from '../types/Command';
+import { PREFIX } from '../config';
 import { Container } from '../services/Container';
 import { logError } from '../utils/logger';
+import { Message } from 'discord.js';
 
 const listLeaderboardsCommand: Command = {
   name: 'listleaderboards',
   description: 'Show all leaderboards in the server',
-  execute: async (message, args): Promise<void> => {
+  usage: `${PREFIX}listleaderboards`,
+  execute: async (message: Message, args: string[]): Promise<void> => {
     const c = Container.getInstance();
     try {
       const server = await c.serverService.getOrCreateServer(

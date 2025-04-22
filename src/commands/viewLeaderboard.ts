@@ -1,15 +1,18 @@
 import { Command } from '../types/Command';
+import { PREFIX } from '../config';
 import { Container } from '../services/Container';
 import { buildLeaderboardEmbed } from '../utils/embedBuilder';
 import { logError } from '../utils/logger';
+import { Message } from 'discord.js';
 
 const viewLeaderboardCommand: Command = {
   name: 'viewleaderboard',
   description: 'Display all members and their points',
-  execute: async (message, args): Promise<void> => {
+  usage: `${PREFIX}viewleaderboard <leaderboard_name>`,
+  execute: async (message: Message, args: string[]): Promise<void> => {
     const [boardName] = args;
     if (!boardName) {
-      await message.reply('Usage: !viewLeaderboard <name>');
+      await message.reply(`Usage: ${PREFIX}viewLeaderboard <name>`);
       return;
     }
 
@@ -27,7 +30,7 @@ const viewLeaderboardCommand: Command = {
         boardName
       );
       if (!lb) {
-        await message.reply(`No leaderboard "${boardName}"`);
+        await message.reply(`❌ No leaderboard "${boardName}"`);
         return;
       }
 

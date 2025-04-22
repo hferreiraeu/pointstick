@@ -1,16 +1,19 @@
 import { Command } from '../types/Command';
+import { PREFIX } from '../config';
 import { Container } from '../services/Container';
 import { logError } from '../utils/logger';
+import { Message } from 'discord.js';
 
 const revokeAdminCommand: Command = {
   name: 'revokeadmin',
   description: 'Revoke bot admin permissions from a member',
+  usage: `${PREFIX}revokeadmin @member`,
   requireAdmin: true,
-  execute: async (message, args): Promise<void> => {
+  execute: async (message: Message, args: string[]): Promise<void> => {
     const mention = args[0];
     const discordId = mention?.replace(/[<@!>]/g, '');
     if (!discordId) {
-      await message.reply('Usage: !revokeAdmin @member');
+      await message.reply(`Usage: ${PREFIX}revokeAdmin @member`);
       return;
     }
     const c = Container.getInstance();
