@@ -18,7 +18,9 @@
 
     // (optional) allow JSON imports, decorators, etc.
     "resolveJsonModule": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+
+    "noImplicitAny": false
   },
   "include": ["src"]
 }
