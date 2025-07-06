@@ -1,0 +1,44 @@
+name: Deploy Discord Bot to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image
+      run: docker build -t pointstick-bot .
+
+    - name: Save image to tar
+      run: docker save pointstick-bot -o pointstick-bot.tar
+
+    - name: Upload Docker image to VPS
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        source: "pointstick-bot.tar"
+        target: ${{ secrets.VPS_DEPLOY_PATH }}
+
+    - name: Deploy and restart bot on VPS
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        script: |
+          cd ${{ secrets.VPS_DEPLOY_PATH }}
+          docker compose down
+          docker load < pointstick-bot.tar
+          docker compose up -d
