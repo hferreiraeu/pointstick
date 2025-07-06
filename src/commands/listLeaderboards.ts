@@ -20,7 +20,7 @@ const listLeaderboardsCommand: Command = {
         await message.reply('No leaderboards found.');
         return;
       }
-      await message.reply('Leaderboards:\n' + lbs.map((l) => l.name).join('\n'));
+      await message.reply('Leaderboards:\n' + lbs.map((l: any) => l.name).join('\n'));
     } catch (err) {
       logError('listLeaderboards', err);
       await message.reply('Failed to list leaderboards.');

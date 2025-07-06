@@ -43,7 +43,7 @@ const viewLeaderboardCommand: Command = {
 
       // Build embed entries with display names
       const entries = await Promise.all(
-        members.map(async (m, i) => {
+        members.map(async (m: any, i: any) => {
           let displayName: string;
           try {
             // displayName uses nickname if set, otherwise username
