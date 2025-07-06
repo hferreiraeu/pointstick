@@ -7,7 +7,7 @@ const helloCommand: Command = {
   description: 'Replies with a greeting',
   usage: `${PREFIX}hello`,
   execute: async (message: Message, args: string[]): Promise<void> => {
-    await message.reply('Hello, I am Point Stick!');
+    await message.reply('Hello, I am Point Stick! :)');
   },
 };
 
