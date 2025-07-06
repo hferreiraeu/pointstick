@@ -1,18 +1,20 @@
+# Use a Debian-based Node image (NOT Alpine)
+FROM node:20-slim
 
-# Use Node 20
-FROM node:20-alpine
+# Install OpenSSL 1.1 for Prisma
+RUN apt-get update && apt-get install -y openssl && apt-get clean
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and install dependencies
+# Install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy everything else
+# Copy source code
 COPY . .
 
-# Build the TypeScript code and generate Prisma client
+# Build TypeScript and Prisma client
 RUN npm run build && npx prisma generate
 
 # Start the bot
