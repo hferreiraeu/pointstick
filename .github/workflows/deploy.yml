@@ -28,9 +28,10 @@ jobs:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.VPS_SSH_KEY }}
-        source: "pointstick-bot.tar"
+        source: "./pointstick-bot.tar"
         target: ${{ secrets.VPS_DEPLOY_PATH }}
-        tar: false  # ✅ Properly disables tar
+        rm: false
+        strip_components: 0
 
     - name: Deploy and restart bot on VPS
       uses: appleboy/ssh-action@v1.0.3
